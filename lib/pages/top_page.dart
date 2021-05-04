@@ -1,5 +1,9 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:memo_app/model/memo.dart';
 
 class TopPage extends StatefulWidget {
   TopPage({Key key, this.title}) : super(key: key);
@@ -11,36 +15,49 @@ class TopPage extends StatefulWidget {
 }
 
 class _TopPageState extends State<TopPage> {
-  int _counter = 0;
+  List<Memo> memoList = [];
 
-  void _incrementCounter() {
+  Future<Void> getMemo() async {
+    //情報を取ってくるメソッド
+    var snapshot = await FirebaseFirestore.instance.collection('memo').get();
+    //コレクション名をmemoという名で登録していたのでmemo↑
+    //getの処理が時間かかるのでawait
+    var docs = snapshot.docs;
+    //docsはドキュメントの名前の部分
+    docs.forEach((doc) {
+      //docが一個一個のドキュメント
+      memoList.add(Memo(
+          title: doc.data()['title'],
+          detail: doc.data()['detail']));
+    });
+
     setState(() {
-      _counter++;
+      //画面再描画
     });
   }
 
   @override
+  initState() {
+    super.initState();
+    getMemo();
+  }
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('FireBase×Flutter'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: ListView.builder(
+          itemCount: memoList.length,
+          itemBuilder: (context, index){
+            return ListTile(
+              title: Text(memoList[index].title),
+            );
+          }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {},
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
