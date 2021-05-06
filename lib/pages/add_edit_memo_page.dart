@@ -2,12 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AddMemoPage extends StatefulWidget {
+class AddEdiMemoPage extends StatefulWidget {
+  final QueryDocumentSnapshot memo;
+  //QueryDocumentSnapshot型のmemoを定義
+  AddEdiMemoPage({this.memo});
+  //AddEditMemoPageにくるタイミングでmemoに対して値を送る
   @override
-  _AddMemoPageState createState() => _AddMemoPageState();
+  _AddEdiMemoPageState createState() => _AddEdiMemoPageState();
 }
 
-class _AddMemoPageState extends State<AddMemoPage> {
+class _AddEdiMemoPageState extends State<AddEdiMemoPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController detailController = TextEditingController();
 
@@ -22,11 +26,33 @@ class _AddMemoPageState extends State<AddMemoPage> {
     });
   }
 
+  Future<void> updateMemo() async{
+  var document = FirebaseFirestore.instance.collection('memo').doc(widget.memo.id);
+  //どのドキュメントを編集するか指定
+    document.update({
+      'title': titleController.text,
+      'detail': detailController.text,
+      'update_time': Timestamp.now(),
+    });
+
+  }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.memo != null){
+      titleController.text = widget.memo.data()['title'];
+      detailController.text = widget.memo.data()['detail'];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('メモを追加'),
+        title: Text(widget.memo == null? 'メモを追加' : 'メモを編集'),
       ),
       body:Center(
         child: Column(
@@ -93,13 +119,17 @@ class _AddMemoPageState extends State<AddMemoPage> {
                   width: MediaQuery.of(context).size.width * 0.8,
                   alignment: Alignment.center,
                   child: ElevatedButton(
-                    child: Text('追加'),
+                    child: Text(widget.memo == null ? '追加' : '編集'),
                     onPressed: () async{
-                    await addMemo();
+                    if(widget.memo == null) {
+                      await addMemo();
+                    } else
+                    await updateMemo();
                     Navigator.pop(context);
                     },
                     //addMemoがめっちゃ時間かかったとしてもaddMemoが終わるまでNavigator.popできないようにしておく。
-                  )),
+                  )
+              ),
             ),
           ],
         ),
