@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:memo_app/model/memo.dart';
+import 'package:memo_app/pages/add_memo_page.dart';
+import 'package:memo_app/pages/memo_page.dart';
 
 class TopPage extends StatefulWidget {
   TopPage({Key key, this.title}) : super(key: key);
@@ -53,11 +55,17 @@ class _TopPageState extends State<TopPage> {
           itemBuilder: (context, index){
             return ListTile(
               title: Text(memoList[index].title),
+              onTap: (){
+                //確認画面に遷移
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MemoPage(memoList[index])));
+              },
             );
           }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => AddMemoPage()));
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
