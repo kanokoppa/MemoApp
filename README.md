@@ -1,6 +1,6 @@
 # memo_app
 
-A new Flutter application.
+FlutterとFireBaseを使ったメモアプリ
 
 ## Getting Started
 
