@@ -28,8 +28,6 @@ class _AddMemoPageState extends State<AddMemoPage> {
       appBar: AppBar(
         title: Text('メモを追加'),
       ),
-
-
       body:Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,11 +101,6 @@ class _AddMemoPageState extends State<AddMemoPage> {
                     //addMemoがめっちゃ時間かかったとしてもaddMemoが終わるまでNavigator.popできないようにしておく。
                   )),
             ),
-
-
-
-
-
           ],
         ),
       ),
