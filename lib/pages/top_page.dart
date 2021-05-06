@@ -21,6 +21,14 @@ class _TopPageState extends State<TopPage> {
   //CollectionReference型のmemos変数を定義
 
 
+  Future<void>deleteMemo(String docId) async{
+    var document = FirebaseFirestore.instance.collection('memo').doc(docId);
+    //documentをdocIdという引数を使って取得
+    document.delete();
+    //それを削除
+  }
+
+
   @override
   initState()  {
     super.initState();
@@ -67,7 +75,9 @@ class _TopPageState extends State<TopPage> {
                             ListTile(
                               trailing: Icon(Icons.delete, color: Colors.redAccent,),
                               title: Text('削除'),
-                              onTap: (){
+                              onTap: () async{
+                              await deleteMemo(snapshot.data.docs[index].id);
+                              Navigator.pop(context);
                               },
                             ),
                           ],
